@@ -3,6 +3,7 @@
 
 # Python stuff
 *.pyc
+*.egg-info
 
 # Virtual environment
 venv
