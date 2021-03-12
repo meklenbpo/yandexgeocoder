@@ -12,9 +12,10 @@ import json
 
 import requests
 
+import credentials as secret
+
 
 URL = 'https://geocode-maps.yandex.ru/1.x'
-APIKEY = '4adfaebf-c18c-4857-9ddc-69241c9d55b9'
 KIND = 'locality'
 FORMAT = 'json'
 RESULTS = 1
@@ -30,7 +31,7 @@ def _form_a_direct_request(address: str) -> dict:
         'url': URL,
         'params': {
             'geocode': address,
-            'apikey': APIKEY,
+            'apikey': secret.APIKEY,
             'format': FORMAT,
             'results': RESULTS
         }
@@ -48,7 +49,7 @@ def _form_a_reverse_request(long_x: float, lat_y: float) -> dict:
         'url': URL,
         'params': {
             'geocode': coord_str,
-            'apikey': APIKEY,
+            'apikey': secret.APIKEY,
             'kind': KIND,
             'format': FORMAT,
             'results': RESULTS
