@@ -53,10 +53,13 @@ def _form_a_reverse_request(long_x: float, lat_y: float) -> dict:
     }
 
 
-def xy_to_address(long_x: float, lat_y: float) -> str:
+def xy_to_address(long_x: float, lat_y: float) -> tuple:
     """Query Yandex for an address given a pair of XY coordinates.
 
-    Return an address in Russia as a string.
+    Returns a tuple of strings representing the geocoding results:
+    1. address in Russia as a string,
+    2. description of the found object (house, street, area, etc)
+    3. geocoding precision level
     """
     request_params = _form_a_reverse_request(long_x, lat_y)
     r = requests.get(**request_params)
@@ -65,16 +68,15 @@ def xy_to_address(long_x: float, lat_y: float) -> str:
     except json.decoder.JSONDecodeError:
         return 'error'
     try:
-        address = (
+        result = (
             response['response']['GeoObjectCollection']['featureMember']
-            [0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']
-            ['formatted']
+            [0]['GeoObject']['metaDataProperty']['GeocoderMetaData']
         )
     except IndexError:
         return 'no address'
     except KeyError:
         return 'no address'
-    return address
+    return result['text'], result['kind'], result['precision']
 
 
 def address_to_xy(address: str) -> tuple:
