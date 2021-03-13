@@ -12,7 +12,7 @@ import json
 
 import requests
 
-import credentials as secret
+import yandex_geocoder_credentials as secret
 
 
 URL = 'https://geocode-maps.yandex.ru/1.x'

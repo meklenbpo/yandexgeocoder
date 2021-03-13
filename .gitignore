@@ -9,4 +9,4 @@
 venv
 
 # Credentials
-credentials.py
+yandex_geocoder_credentials.py

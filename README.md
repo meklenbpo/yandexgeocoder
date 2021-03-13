@@ -10,8 +10,8 @@ Yandex Geocoder:
 A valid Yandex Geocoder API key is required to operate the `yandexgeocoder`
 module.  
 
-Add a new file called `credentials.py` to the root of the module with the
-following sample content:
+Add a new file called `yandex_geocoder_credentials.py` to the root of the
+module with the following sample content:
 
 ```Python
 
