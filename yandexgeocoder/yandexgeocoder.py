@@ -75,7 +75,9 @@ def xy_to_address(long_x: float, lat_y: float) -> tuple:
     r = requests.get(**request_params)
     response = r.json()
     if 'error' in response:
-        raise ServiceError(f'{response['error']}/{response['message']}')
+        error = response['error']
+        message = response['message']
+        raise ServiceError(f'{error} / {message}') 
     try:
         result = (
             response['response']['GeoObjectCollection']['featureMember']
@@ -96,7 +98,9 @@ def address_to_xy(address: str) -> tuple:
     r = requests.get(**request_params)
     response = r.json()
     if 'error' in response:
-        raise ServiceError(f'{response['error']}/{response['message']}')    
+        error = response['error']
+        message = response['message']
+        raise ServiceError(f'{error} / {message}')    
     try:
         coords = (
             response['response']['GeoObjectCollection']['featureMember']
