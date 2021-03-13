@@ -18,6 +18,16 @@ import credentials as secret
 URL = 'https://geocode-maps.yandex.ru/1.x'
 
 
+class ServiceError(Exception):
+    """Raised when there's a problem with Yandex Geocoder."""
+    pass
+
+
+class UnexpectedResponseError(Exception):
+    """Raised when a response cannot be parsed using standard scheme."""
+    pass
+
+
 def _form_a_direct_request(address: str) -> dict:
     """Prepare a dictionary of parameters for a direct geocoding
     request.
@@ -63,19 +73,16 @@ def xy_to_address(long_x: float, lat_y: float) -> tuple:
     """
     request_params = _form_a_reverse_request(long_x, lat_y)
     r = requests.get(**request_params)
-    try:
-        response = r.json()
-    except json.decoder.JSONDecodeError:
-        return 'error'
+    response = r.json()
+    if 'error' in response:
+        raise ServiceError(f'{response['error']}/{response['message']}')
     try:
         result = (
             response['response']['GeoObjectCollection']['featureMember']
             [0]['GeoObject']['metaDataProperty']['GeocoderMetaData']
         )
-    except IndexError:
-        return 'no address'
-    except KeyError:
-        return 'no address'
+    except (IndexError, KeyError):
+        raise UnexpectedResponseError
     return result['text'], result['kind'], result['precision']
 
 
@@ -87,23 +94,20 @@ def address_to_xy(address: str) -> tuple:
     """
     request_params = _form_a_direct_request(address)
     r = requests.get(**request_params)
-    try:
-        response = r.json()
-    except json.decoder.JSONDecodeError:
-        return 'error'
+    response = r.json()
+    if 'error' in response:
+        raise ServiceError(f'{response['error']}/{response['message']}')    
     try:
         coords = (
             response['response']['GeoObjectCollection']['featureMember']
             [0]['GeoObject']['Point']['pos']
         )
-    except IndexError:
-        return 'not found'
-    except KeyError:
-        return 'not found'
+    except (IndexError, KeyError):
+        raise UnexpectedResponseError
     x_str, y_str = coords.split(' ')
     try:
         x = float(x_str)
         y = float(y_str)
     except ValueError:
-        return 'error'
+        raise UnexpectedResponseError
     return x, y
