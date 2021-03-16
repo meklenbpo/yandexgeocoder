@@ -96,7 +96,6 @@ def address_to_xy(address: str) -> tuple:
     """
     request_params = _form_a_direct_request(address)
     r = requests.get(**request_params)
-    print(r.url)  # DEBUG
     response = r.json()
     if 'error' in response:
         error = response['error']
